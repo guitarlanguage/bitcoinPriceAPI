@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Bitcoin chart</title>
+</head>
+
+<body>
+
+    <!-- Artist Select Box -->
+    <!-- <form id="artist-form"> -->
+
+        <!-- Label for Text Box -->
+        <!-- <label for="artist-input">Choose Your Artist</label> -->
+
+        <!-- Text Input Box -->
+        <!-- <input type="text" id="artist-input"><br> -->
+
+        <!-- Submit Button -->
+        <!-- <input id="select-artist" type="submit" value="GO!">
+    </form> -->
+
+    <!-- Artist Information -->
+    <div id="artist-div"></div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // cors work around
+        jQuery.ajaxPrefilter(function(options) {
+            if (options.crossDomain && jQuery.support.cors) {
+                options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
+            }
+        });
+        sevenDayWeightedAvg();
+        currentPrice()
+        function sevenDayWeightedAvg() {
+            var queryURL = "http://api.bitcoincharts.com/v1/weighted_prices.json";
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+                var results = response;
+
+                var obj = JSON.parse(results);
+                console.log(obj.USD);
+
+                // Printing the entire object to console
+                var us = obj.USD["7d"];
+
+                // Constructing HTML containing the artist information
+                $("#artist-div").html("Bitcoin USD 7 day weighted average price: $" + us + "<br>");
+
+            });
+        }
+        function currentPrice() {
+            var queryURL = "http://api.bitcoincharts.com/v1/markets.json";
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function(response) {
+                var results = response;
+
+                var obj = JSON.parse(results);
+                console.log(obj);
+
+                // Printing the entire object to console
+                var ask = obj["57"]["ask"];
+                var bid = obj["57"]["bid"];
+                var exchange = obj["57"]["symbol"];
+
+                // Constructing HTML containing the artist information
+                $("#artist-div").append(exchange + " exchange" + " Asking Price: $" + ask + "<br>");
+                $("#artist-div").append(exchange + " exchange" + " Current Bid: $" + bid);
+
+            });
+        }
+
+    });
+</script>
+
+</html>
