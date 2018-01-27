@@ -7,13 +7,10 @@ $(document).ready(function() {
     });
     // caching jquery object
     var $bit = $("#bit-div");
-    // calling seven day weighted average price function
-    sevenDayWeightedAvg();
-    // calling seven day asking and bid bitcoin price function
-    currentPrice()
+
     //this function connects to the bitcoin weighted average api and
     //prints it to the $bit div
-    function sevenDayWeightedAvg() {
+    var sevenDayWeightedAvg = function() {
         var queryURL = "http://api.bitcoincharts.com/v1/weighted_prices.json";
         $.ajax({
             url: queryURL,
@@ -32,9 +29,15 @@ $(document).ready(function() {
 
         });
     }
-    //this function connects to the bitcoin weighted average api and
+    console.log(sevenDayWeightedAvg);
+    //set interval for ajax repeated call
+    var interval = 1000 * 60 * 1;
+    // use the setInterval method to call sevenDayWeightedAvg every 1 min
+    setInterval(sevenDayWeightedAvg, interval);
+    //this function connects to the Bitcoin api and produces the latest
+    //ask and bid price via the Bitstamp exchange weighted average api and
     //appends it to the $bit div
-    function currentPrice() {
+    var currentPrice = function() {
         var queryURL = "http://api.bitcoincharts.com/v1/markets.json";
         $.ajax({
             url: queryURL,
@@ -56,5 +59,8 @@ $(document).ready(function() {
 
         });
     }
+    console.log(currentPrice);
+    //use the setInterval method to the api every minute
+    setInterval(currentPrice, interval);
 
 });
