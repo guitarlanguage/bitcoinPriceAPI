@@ -5,12 +5,14 @@ $(document).ready(function() {
             options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
         }
     });
-    // caching jquery object
+    // caching jquery objects
     var $bit = $("#bit-div");
+    var $bitAsk = $("#bit-ask");
+    var $bitBid = $("#bit-bid");
 
     //this function connects to the bitcoin weighted average api and
     //prints it to the $bit div
-    var sevenDayWeightedAvg = function() {
+    function sevenDayWeightedAvg() {
         var queryURL = "http://api.bitcoincharts.com/v1/weighted_prices.json";
         $.ajax({
             url: queryURL,
@@ -30,14 +32,9 @@ $(document).ready(function() {
         });
     }
     console.log(sevenDayWeightedAvg);
-    //set interval for ajax repeated call
-    var interval = 1000 * 60 * 1;
-    // use the setInterval method to call sevenDayWeightedAvg every 1 min
-    setInterval(sevenDayWeightedAvg, interval);
-    //this function connects to the Bitcoin api and produces the latest
-    //ask and bid price via the Bitstamp exchange weighted average api and
-    //appends it to the $bit div
-    var currentPrice = function() {
+
+    //calls bitcoincharts api for current ask and bid price from bitstamp exchange
+    function currentPrice() {
         var queryURL = "http://api.bitcoincharts.com/v1/markets.json";
         $.ajax({
             url: queryURL,
@@ -54,13 +51,18 @@ $(document).ready(function() {
             var exchange = obj["57"]["symbol"];
 
             // Constructing HTML containing the artist information
-            $bit.append(exchange + " Asking Price: $" + ask + "<br>");
-            $bit.append(exchange + " Current Bid: $" + bid);
+            $bitAsk.html(exchange + " Asking Price: $" + ask + "<br>");
+            $bitBid.html(exchange + " Current Bid: $" + bid);
 
         });
     }
-    console.log(currentPrice);
+
+    sevenDayWeightedAvg();
+    currentPrice();
+
+    var interval = 60000;
     //use the setInterval method to the api every minute
-    setInterval(currentPrice, interval);
+    setInterval(sevenDayWeightedAvg, currentPrice, interval);
+
 
 });
